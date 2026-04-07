@@ -1,16 +1,16 @@
-# 生成的前任 Skill（隐私保护，不上传）
+# 角色资料包与示例
 exes/*
 !exes/example_xiaoming/
 !exes/example_xiaoming/**
 
-# 临时文件
+# 临时文件与缓存
 /tmp/
 *.pyc
 __pycache__/
 .DS_Store
 stdout
 
-# 用户数据
+# 本地私有数据
 knowledge/
 *.db
 *.sqlite
@@ -27,11 +27,11 @@ data/processed/legacy_exports/
 data/chat_records/*/
 !data/chat_records/README.md
 
-# IDE
+# 开发环境
 .vscode/
 .idea/
 
-# 环境
+# 本地环境与密钥
 .env
 venv/
 config/providers.local.json
