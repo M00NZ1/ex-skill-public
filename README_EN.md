@@ -11,9 +11,7 @@
 
 This project extends the role-pack workflow inspired by [perkfly/ex-skill](https://github.com/perkfly/ex-skill) and adds a host-agnostic build pipeline, a local web chat app, local sticker sending, voice interface hooks, and a repository layout suitable for public release.
 
-The repository is designed for public publishing, so it does not ship with personal chat samples, private media, or local model credentials. Import your own chat exports locally, build a role pack, and continue using it in Cursor, Codex, Gemini CLI, Claude Code, or the bundled local web chat.
-
-It is best understood as a public template repository that separates project code from personal chat data.
+This repository is organized around a simple split: public code stays in the repository, personal chat data stays local. The public edition ships with the toolchain, templates, a sanitized example pack, and the local web chat app; real chat exports, media samples, and local model credentials are connected locally and then used in Cursor, Codex, Gemini CLI, Claude Code, or the bundled web chat.
 
 [Credits](#credits) · [What It Is](#what-it-is) · [Features](#features) · [Quick Start](#quick-start) · [Workflow](#workflow) · [Examples](#examples) · [Deployment](#deployment) · [Privacy and Compliance](#privacy-and-compliance) · [Docs](#docs)
 
@@ -93,6 +91,29 @@ These files can be consumed by agent tools directly or loaded by the local chat 
 - Simulated reply pacing based on role-pack timing signals
 - Optional TTS / voice interface integration
 
+### Provider Roles
+
+The project currently separates model interfaces into three channels:
+
+1. `TEXT_*`
+   Used for live chat replies, sticker decisions, and response pacing in the web app; implemented in [app.py](apps/local_chat/app.py) and [llm_client.py](apps/local_chat/services/llm_client.py).
+2. `ENRICH_*`
+   Used for role-pack autofill and structured extraction; implemented in [profile_autofill.py](tools/profile_autofill.py).
+3. `TTS_*`
+   Used for voice output and optional voice cloning; implemented in [tts_client.py](apps/local_chat/services/tts_client.py) and [voice_profile_manager.py](apps/local_chat/services/voice_profile_manager.py).
+
+The built-in provider map currently includes:
+
+- `DeepSeek Official`
+- `SiliconFlow (硅基流动)`
+- `Volcengine (火山引擎/豆包)`
+
+The default priority in code is:
+
+1. live text chat prefers `SiliconFlow (硅基流动)`, then falls back to `DeepSeek Official`, then `Volcengine`
+2. autofill prefers `DeepSeek Official`, then falls back to `SiliconFlow (硅基流动)`, then `Volcengine`
+3. voice output prefers `SiliconFlow (硅基流动)` and defaults to the `siliconflow_clone` path; it can also be switched to `openai_compatible`, `custom_http`, or `none`
+
 ---
 
 ## Quick Start
@@ -146,7 +167,7 @@ If all you have is an official WeChat migration backup with `.enc`, `.dat`, `bac
 
 ### 2. Add media materials
 
-If available, also prepare:
+The role pack can also take these media inputs:
 
 - `transcripts.json`
 - `images/`
@@ -262,14 +283,15 @@ Detailed guides:
 
 ## Privacy and Compliance
 
-Use this project only with chat data you are authorized to handle for learning, research, interface experiments, or personal projects.
+The public repository is meant to contain only engineering code, templates, docs, and sanitized example structure. Real chat exports, media samples, absolute local paths, and private credentials belong to the local runtime layer rather than the published repository.
 
-Please keep the following in mind:
+The default local integration points are:
 
-1. Do not process private data without authorization
-2. Do not publish personal chat logs, media files, or private credentials in a public repository
-3. Store your own role-pack data locally under `data/`, `exes/your_ex/`, and `config/providers.local.json`
-4. Before publishing, re-check all real text, media files, paths, and secrets
+- `data/`
+- `exes/your_ex/`
+- `config/providers.local.json`
+
+When the project is published publicly, repository contents should stay in a code-and-template-only state, without real chat text, media samples, path references, or secret configuration.
 
 ---
 
