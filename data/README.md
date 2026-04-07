@@ -1,15 +1,15 @@
 # 数据目录
 
-此目录用于放置你本地的聊天原材料、媒体文件与处理中间结果。
+此目录用于放置本地的聊天原材料、媒体文件与处理中间结果。
 
-常见目录包括：
+当前结构大致分为：
 
-- `data/chat_records/`
-- `data/texts/`
-- `data/images/`
-- `data/emojis/`
-- `data/videos/`
-- `data/voice_samples/`
-- `data/runtime/`
+- `data/chat_records/`：按资料包分组的原始聊天工作区
+- `data/texts/`：单独整理出的文本聊天导出
+- `data/images/`：图片素材
+- `data/emojis/`：表情包素材
+- `data/videos/`：视频素材
+- `data/voice_samples/`：语音样本与声线参考
+- `data/runtime/`：本地运行缓存
 
-如果这些目录中包含个人聊天文本、媒体样本、时间线或私有缓存，请在公开发布前自行确认未被纳入版本控制。
+如果这些目录中包含真实聊天文本、媒体样本、时间线或私有缓存，请在公开发布前自行确认未被纳入版本控制。
