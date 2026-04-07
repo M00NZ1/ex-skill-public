@@ -1,4 +1,4 @@
-name: 基础检查
+name: 中文优先基础检查
 
 on:
   push:
