@@ -61,6 +61,23 @@ Reference template:
 
 - [`config/providers.local.example.json`](config/providers.local.example.json)
 
+### Provider Roles
+
+After installation, runtime configuration is split into three interface groups:
+
+1. `TEXT_*`
+   Handles live chat replies and sticker strategy in the local web app.
+2. `ENRICH_*`
+   Handles role-pack autofill and structured extraction in `tools/profile_autofill.py`.
+3. `TTS_*`
+   Handles voice output and optional voice cloning.
+
+According to the current code defaults:
+
+- live text chat prefers `SiliconFlow (硅基流动)`
+- autofill prefers `DeepSeek Official`
+- voice output prefers `SiliconFlow (硅基流动)` and defaults to `siliconflow_clone`
+
 ---
 
 ## Step 4: Prepare chat exports
@@ -70,7 +87,7 @@ Recommended reading:
 - [`docs/EXPORT_GUIDE.md`](docs/EXPORT_GUIDE.md)
 - [`docs/EXPORT_GUIDE_EN.md`](docs/EXPORT_GUIDE_EN.md)
 
-In short:
+Import pipeline summary:
 
 1. WeChat data should be converted into readable `json / txt / html`
 2. QQ data should preferably come from official export flows or be cleaned into text
@@ -132,7 +149,7 @@ Open:
 
 ### Local private data
 
-If you connect your own voice samples, chat texts, or media files, keep them under:
+The local runtime layer reads chat texts, media samples, and private provider settings from:
 
 ```text
 data/
@@ -140,7 +157,7 @@ exes/your_ex/
 config/providers.local.json
 ```
 
-Review those directories before publishing anything publicly.
+The published repository itself stays in a code-and-template-only form; real texts, media samples, and secret configuration remain local.
 
 ---
 
