@@ -28,7 +28,7 @@ The repository ships with one example pack:
 exes/example_xiaoming/
 ```
 
-It exists only to demonstrate the expected structure and loading flow. Replace the page `slug` with your own pack when using real data locally.
+It exists only to demonstrate the expected structure and loading flow. Once the page `slug` is switched to a local pack, the app will load the real build output.
 
 ---
 
@@ -91,12 +91,55 @@ Then open:
 
 ---
 
-## Usage suggestions
+## Provider Roles
 
-1. change the left-side `slug` to your own pack first
-2. if you only want manual stickers, set automatic stickers to `off`
-3. keep paced replies enabled if you want less robotic turn-taking
-4. review `data/` and `exes/{slug}` before publishing anything publicly
+The local chat app uses three interface lanes:
+
+### 1. Text chat interface
+
+- config prefix: `TEXT_*`
+- responsible for: reply text, sticker strategy, voice-send decision
+- entry path: [app.py](../apps/local_chat/app.py) -> [llm_client.py](../apps/local_chat/services/llm_client.py)
+
+Default priority:
+
+1. `SiliconFlow (硅基流动)`
+2. `DeepSeek Official`
+3. `Volcengine (火山引擎/豆包)`
+
+### 2. Pack enrichment interface
+
+- config prefix: `ENRICH_*`
+- responsible for: autofill and structured role-pack extraction
+- entry path: [profile_autofill.py](../tools/profile_autofill.py)
+
+Default priority:
+
+1. `DeepSeek Official`
+2. `SiliconFlow (硅基流动)`
+3. `Volcengine (火山引擎/豆包)`
+
+### 3. Voice output interface
+
+- config prefix: `TTS_*`
+- responsible for: TTS output, custom voice upload, audio file generation
+- entry path: [tts_client.py](../apps/local_chat/services/tts_client.py) and [voice_profile_manager.py](../apps/local_chat/services/voice_profile_manager.py)
+
+Default modes:
+
+- `siliconflow_clone`
+- `openai_compatible`
+- `custom_http`
+- `none`
+
+---
+
+## Runtime Behavior
+
+1. the left-side `slug` switches the currently loaded role pack
+2. when automatic stickers are set to `off`, the UI keeps only manual sticker sending
+3. when paced replies are enabled, rapid user messages are merged before the delayed reply is shown
+4. `data/` and `exes/{slug}` belong to the local runtime layer; the public repository keeps only code and template structure
 
 ---
 
@@ -104,4 +147,4 @@ Then open:
 
 1. history is stored in browser local storage, not in a server database
 2. switching browsers or clearing site storage removes local history
-3. if you connect voice cloning, store samples under `data/voice_samples/` and manage those files privately
+3. voice samples are read from `data/voice_samples/`; that directory belongs to the local data layer rather than the published repository
