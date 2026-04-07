@@ -13,6 +13,8 @@ This project extends the role-pack workflow inspired by [perkfly/ex-skill](https
 
 The repository is designed for public publishing, so it does not ship with personal chat samples, private media, or local model credentials. Import your own chat exports locally, build a role pack, and continue using it in Cursor, Codex, Gemini CLI, Claude Code, or the bundled local web chat.
 
+It is best understood as a public template repository that separates project code from personal chat data.
+
 [Credits](#credits) · [What It Is](#what-it-is) · [Features](#features) · [Quick Start](#quick-start) · [Workflow](#workflow) · [Examples](#examples) · [Deployment](#deployment) · [Privacy and Compliance](#privacy-and-compliance) · [Docs](#docs)
 
 ---
