@@ -61,6 +61,23 @@ config/providers.local.json
 
 - [`config/providers.local.example.json`](config/providers.local.example.json)
 
+### 接口分工
+
+安装完成后，运行层会按三组接口变量分工：
+
+1. `TEXT_*`
+   负责本地聊天页面中的文本回复与表情策略。
+2. `ENRICH_*`
+   负责 `tools/profile_autofill.py` 的资料补全与结构化提炼。
+3. `TTS_*`
+   负责本地语音输出与可选声线克隆。
+
+按当前代码默认逻辑：
+
+- 文本聊天优先读取 `SiliconFlow (硅基流动)` 配置
+- 资料补全优先读取 `DeepSeek Official` 配置
+- 语音输出优先读取 `SiliconFlow (硅基流动)` 配置，并默认走 `siliconflow_clone`
+
 ---
 
 ## 第四步：准备聊天记录
@@ -70,7 +87,7 @@ config/providers.local.json
 - [`docs/EXPORT_GUIDE.md`](docs/EXPORT_GUIDE.md)
 - [`docs/EXPORT_GUIDE_EN.md`](docs/EXPORT_GUIDE_EN.md)
 
-简要建议：
+导入链路摘要：
 
 1. 微信可优先整理为 `json / txt / html`
 2. QQ 可优先使用官方客户端导出，再整理为可读文本
@@ -132,7 +149,7 @@ uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
 
 ### 本地私有数据
 
-若需接入你自己的语音样本、聊天文本或媒体材料，建议放在：
+本地运行层默认从这些位置读取聊天文本、媒体样本与私有配置：
 
 ```text
 data/
@@ -140,7 +157,7 @@ exes/your_ex/
 config/providers.local.json
 ```
 
-并在提交公开仓库前自行确认这些目录未包含需要保密的内容。
+公开仓库本身保持代码、模板与说明文档；上述目录中的真实文本、媒体样本与密钥配置不进入公开版本。
 
 ---
 
