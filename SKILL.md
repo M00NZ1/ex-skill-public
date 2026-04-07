@@ -14,7 +14,7 @@ allowed-tools: Read, Write, Edit, Bash
 # 前任.skill 创建器（Claude Code 版）
 
 此文件保留了 Claude Code / OpenClaw 所需的 Skill 入口，方便继续兼容原始 Skill 使用方式。
-仓库展示层默认以中文说明为主，英文材料仅作为补充入口。
+仓库展示层默认以中文文档为主，英文材料仅作补充入口。
 
 ## 触发条件
 
