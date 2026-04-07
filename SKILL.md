@@ -13,6 +13,8 @@ allowed-tools: Read, Write, Edit, Bash
 
 # 前任.skill 创建器（Claude Code 版）
 
+此文件保留了 Claude Code / OpenClaw 所需的 Skill 入口，方便继续兼容原始 Skill 使用方式。
+
 ## 触发条件
 
 当用户说以下任意内容时启动：
