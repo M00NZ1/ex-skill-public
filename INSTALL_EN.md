@@ -3,6 +3,7 @@
 [中文](INSTALL.md) | [English](INSTALL_EN.md)
 
 This document is the English installation entry for the public repository.
+Chinese documentation is the primary presentation layer for this repository.
 
 ## Scope
 
