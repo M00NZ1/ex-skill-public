@@ -1,0 +1,28 @@
+{
+  "voice": {
+    "source_path": "",
+    "report_file": "",
+    "transcripts_file": "",
+    "target_message_count": 0,
+    "transcribed_target_count": 0
+  },
+  "images": {
+    "source_path": "",
+    "report_file": "",
+    "target_message_count": 0,
+    "file_count": 0
+  },
+  "emojis": {
+    "source_path": "",
+    "report_file": "",
+    "top_usage_file": "",
+    "target_message_count": 0,
+    "file_count": 0
+  },
+  "videos": {
+    "source_path": "",
+    "report_file": "",
+    "target_message_count": 0,
+    "file_count": 0
+  }
+}

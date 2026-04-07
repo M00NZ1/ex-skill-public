@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前任本地聊天应用</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --panel: #fffaf2;
+      --ink: #2f2a23;
+      --accent: #9d5c2f;
+      --line: #e6d6c4;
+      --soft: #7a6c5c;
+      --mine: #d7f0d0;
+      --theirs: #fff3d9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, #f7d8b6 0, transparent 22%),
+        radial-gradient(circle at bottom left, #d9ead3 0, transparent 20%),
+        var(--bg);
+    }
+
+    .shell {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .panel {
+      background: rgba(255, 250, 242, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 18px 40px rgba(77, 53, 29, 0.08);
+      backdrop-filter: blur(10px);
+      min-height: 0;
+    }
+
+    .sidebar {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .sidebar h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f0dfc7;
+      color: var(--accent);
+      font-size: 12px;
+      width: fit-content;
+    }
+
+    .summary {
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 13px;
+      color: var(--soft);
+    }
+
+    .stickers {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .sticker-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .sticker-item img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+    }
+
+    .sticker-count {
+      position: absolute;
+      right: 6px;
+      bottom: 6px;
+      background: rgba(47, 42, 35, 0.72);
+      color: white;
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 2px 6px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .toolbar small {
+      color: var(--soft);
+    }
+
+    .ghost-btn {
+      background: #ead8c2;
+      color: var(--accent);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .chat {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .chat-header {
+      padding: 22px 24px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .chat-header h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .chat-log {
+      padding: 20px 24px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .message {
+      max-width: 76%;
+      padding: 14px 16px;
+      border-radius: 20px;
+      line-height: 1.7;
+      position: relative;
+      animation: rise 180ms ease-out;
+      word-break: break-word;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: var(--mine);
+      border-bottom-right-radius: 6px;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: var(--theirs);
+      border-bottom-left-radius: 6px;
+    }
+
+    .message small {
+      display: block;
+      margin-top: 8px;
+      color: var(--soft);
+    }
+
+    .sticker-preview {
+      display: block;
+      margin-top: 10px;
+      max-width: 180px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    .composer {
+      padding: 18px 24px 24px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 12px;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    textarea, input, button {
+      font: inherit;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: white;
+      color: var(--ink);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    button {
+      border: none;
+      background: var(--accent);
+      color: white;
+      border-radius: 16px;
+      padding: 14px 22px;
+      cursor: pointer;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--soft);
+    }
+
+    .status {
+      min-height: 20px;
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    select {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .shell {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .chat {
+        min-height: 72vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel sidebar">
+      <span class="badge">本地部署 MVP</span>
+      <h1 id="profile-name">载入中</h1>
+      <div class="summary" id="profile-summary">正在读取资料包...</div>
+      <div>
+        <label for="slug">资料包 slug</label>
+        <input id="slug" type="text" value="example_xiaoming">
+      </div>
+      <button id="reload-btn" type="button">重新载入资料</button>
+      <button id="voice-btn" type="button">构建专属声线</button>
+      <div class="summary" id="voice-status">语音状态：未构建</div>
+      <div>
+        <div class="toolbar">
+          <label>表情包面板</label>
+          <small id="sticker-count-tip">载入中</small>
+        </div>
+        <div class="stickers" id="sticker-candidates"></div>
+        <div class="row" style="margin-top: 10px;">
+          <button id="more-stickers-btn" class="ghost-btn" type="button">查看更多表情包</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="panel chat">
+      <header class="chat-header">
+        <h2>聊天窗口</h2>
+        <div class="status" id="status">提示：当前页面能真正显示本地表情包和音频，这才是提示词之外缺失的那一层。</div>
+      </header>
+      <section class="chat-log" id="chat-log"></section>
+      <section class="composer">
+        <div class="row">
+          <label><input id="enable-voice" type="checkbox"> 尝试生成语音</label>
+          <label for="sticker-mode">自动表情包</label>
+          <select id="sticker-mode">
+            <option value="off">关闭</option>
+            <option value="light" selected>克制</option>
+            <option value="natural">贴近原始</option>
+          </select>
+          <label><input id="enable-paced-reply" type="checkbox" checked> 拟真回复节奏</label>
+        </div>
+        <textarea id="message" placeholder="输入你想说的话"></textarea>
+        <div class="row">
+          <button id="send-btn" type="button">发送</button>
+          <button id="clear-chat-btn" class="ghost-btn" type="button">清空当前聊天</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_PREFIX = 'ex_skill_local_chat';
+    const state = {
+      slug: 'example_xiaoming',
+      history: [],
+      stickerCandidates: [],
+      stickerVisible: 24,
+      replyProfile: {
+        median_reply_seconds: 18,
+        p75_reply_seconds: 60,
+        source: 'default'
+      },
+      pendingBatch: [],
+      pendingReplyTimer: null,
+      isRequestInFlight: false,
+      sessionVersion: 0
+    };
+
+    function setStatus(text) {
+      document.getElementById('status').textContent = text;
+    }
+
+    function getStorageKey(slug) {
+      return `${STORAGE_PREFIX}:${slug}`;
+    }
+
+    function scrollChatToBottom() {
+      const log = document.getElementById('chat-log');
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function loadSessionFromStorage(slug) {
+      try {
+        const raw = localStorage.getItem(getStorageKey(slug));
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveSessionToStorage() {
+      const payload = {
+        history: state.history.slice(-200),
+        sticker_mode: document.getElementById('sticker-mode').value,
+        enable_voice: document.getElementById('enable-voice').checked,
+        enable_paced_reply: document.getElementById('enable-paced-reply').checked
+      };
+      localStorage.setItem(getStorageKey(state.slug), JSON.stringify(payload));
+    }
+
+    function applySavedSession(saved) {
+      state.history = Array.isArray(saved?.history) ? saved.history.slice(-200) : [];
+      document.getElementById('sticker-mode').value = saved?.sticker_mode || 'light';
+      document.getElementById('enable-voice').checked = Boolean(saved?.enable_voice);
+      document.getElementById('enable-paced-reply').checked = saved?.enable_paced_reply !== false;
+    }
+
+    function escapeHtml(text) {
+      return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderStickerCandidates() {
+      const root = document.getElementById('sticker-candidates');
+      const moreBtn = document.getElementById('more-stickers-btn');
+      const visibleItems = state.stickerCandidates.slice(0, state.stickerVisible);
+      root.innerHTML = '';
+      visibleItems.forEach((item) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'sticker-item';
+        button.title = item.count > 0 ? `${item.md5} · 历史发送 ${item.count} 次` : item.md5;
+        button.addEventListener('click', () => {
+          sendMessage({
+            manualStickerMd5: item.md5,
+            manualStickerUrl: item.url || ''
+          }).catch((err) => setStatus(`发表情包失败：${err.message}`));
+        });
+
+        const img = document.createElement('img');
+        img.src = item.url || '';
+        img.alt = item.md5;
+        button.appendChild(img);
+
+        if (item.count > 0) {
+          const badge = document.createElement('span');
+          badge.className = 'sticker-count';
+          badge.textContent = item.count;
+          button.appendChild(badge);
+        }
+
+        root.appendChild(button);
+      });
+      document.getElementById('sticker-count-tip').textContent =
+        `已显示 ${visibleItems.length} / ${state.stickerCandidates.length}`;
+      moreBtn.style.display = state.stickerVisible >= state.stickerCandidates.length ? 'none' : 'inline-flex';
+    }
+
+    function redrawChatLog() {
+      const log = document.getElementById('chat-log');
+      log.innerHTML = '';
+      state.history.forEach((item) => {
+        const finalText = `${item.content || ''}${item.emoji_text ? ' ' + item.emoji_text : ''}`;
+        renderMessage(item.role, finalText.trim(), item);
+      });
+      scrollChatToBottom();
+    }
+
+    function renderMessage(role, text, extra = {}) {
+      const log = document.getElementById('chat-log');
+      const box = document.createElement('div');
+      box.className = `message ${role}`;
+      if (text) {
+        box.innerHTML = `<div>${escapeHtml(text).replace(/\n/g, '<br>')}</div>`;
+      }
+
+      if (extra.sticker_url) {
+        const img = document.createElement('img');
+        img.src = extra.sticker_url;
+        img.className = 'sticker-preview';
+        img.alt = '表情包';
+        box.appendChild(img);
+      }
+
+      if (extra.audio_url) {
+        const audio = document.createElement('audio');
+        audio.controls = true;
+        audio.src = extra.audio_url;
+        audio.style.marginTop = '10px';
+        box.appendChild(audio);
+      }
+
+      log.appendChild(box);
+      scrollChatToBottom();
+    }
+
+    function getHistoryWithoutBatch(batchLength = state.pendingBatch.length) {
+      if (!batchLength) return [...state.history];
+      return state.history.slice(0, state.history.length - batchLength);
+    }
+
+    function computeBatchIdleDelayMs() {
+      if (!document.getElementById('enable-paced-reply').checked) {
+        return 120;
+      }
+
+      const median = Number(state.replyProfile?.median_reply_seconds || 18);
+      return Math.max(1200, Math.min(2600, 800 + median * 22));
+    }
+
+    function computeAssistantDisplayDelayMs(batchItems, replyText, hasVoice) {
+      if (!document.getElementById('enable-paced-reply').checked) {
+        return 80;
+      }
+
+      const median = Number(state.replyProfile?.median_reply_seconds || 18);
+      const p75 = Number(state.replyProfile?.p75_reply_seconds || 60);
+      const batchBonus = Math.min(1600, Math.max(0, batchItems.length - 1) * 650);
+      const textBonus = Math.min(900, (replyText || '').length * 18);
+      const voiceBonus = hasVoice ? 700 : 0;
+      const scaledMedian = Math.min(3200, Math.max(900, median * 65));
+      const scaledP75 = Math.min(5200, Math.max(1800, p75 * 28));
+      return Math.max(scaledMedian, Math.min(scaledP75, scaledMedian + batchBonus + textBonus + voiceBonus));
+    }
+
+    function sleep(ms) {
+      return new Promise((resolve) => window.setTimeout(resolve, ms));
+    }
+
+    function scheduleReplyFlush() {
+      if (state.pendingReplyTimer) {
+        window.clearTimeout(state.pendingReplyTimer);
+      }
+      state.pendingReplyTimer = window.setTimeout(() => {
+        flushPendingReply().catch((err) => setStatus(`发送失败：${err.message}`));
+      }, computeBatchIdleDelayMs());
+    }
+
+    async function loadProfile() {
+      state.slug = document.getElementById('slug').value.trim() || 'example_xiaoming';
+      setStatus('正在读取资料包...');
+      state.sessionVersion += 1;
+      state.pendingBatch = [];
+      state.isRequestInFlight = false;
+      if (state.pendingReplyTimer) {
+        window.clearTimeout(state.pendingReplyTimer);
+        state.pendingReplyTimer = null;
+      }
+      const resp = await fetch(`/api/profile/${encodeURIComponent(state.slug)}`);
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(text);
+      }
+      const data = await resp.json();
+      document.getElementById('profile-name').textContent = data.name;
+      document.getElementById('profile-summary').textContent = data.summary;
+      state.replyProfile = data.reply_profile || state.replyProfile;
+      state.stickerCandidates = data.sticker_candidates || [];
+      state.stickerVisible = 24;
+      applySavedSession(loadSessionFromStorage(state.slug));
+      renderStickerCandidates();
+      redrawChatLog();
+      setStatus(`资料包已加载，已恢复 ${state.history.length} 条本地历史。当前候选 ${state.stickerCandidates.length} 个。`);
+    }
+
+    async function buildVoiceProfile() {
+      setStatus('正在构建专属声线...');
+      const resp = await fetch(`/api/voice-profile/${encodeURIComponent(state.slug)}`, {
+        method: 'POST'
+      });
+      const data = await resp.json();
+      if (!resp.ok || !data.ready) {
+        document.getElementById('voice-status').textContent = `语音状态：${data.message || '构建失败'}`;
+        setStatus('声线构建失败');
+        return;
+      }
+      document.getElementById('voice-status').textContent =
+        `语音状态：已就绪，样本 ${data.sample_duration}s，来源 ${data.sample_path}`;
+      setStatus('专属声线已构建，后续可直接发送语音。');
+    }
+
+    async function flushPendingReply() {
+      if (state.isRequestInFlight || !state.pendingBatch.length) {
+        return;
+      }
+
+      state.pendingReplyTimer = null;
+      state.isRequestInFlight = true;
+      const requestSessionVersion = state.sessionVersion;
+      const requestSlug = state.slug;
+      const batchItems = [...state.pendingBatch];
+      const historyBeforeSend = getHistoryWithoutBatch(batchItems.length);
+      state.pendingBatch = [];
+      const combinedMessage = batchItems
+        .map((item) => item.content || (item.sticker_md5 ? '[用户发送了表情包]' : ''))
+        .filter(Boolean)
+        .join('\n');
+      const lastStickerItem = [...batchItems].reverse().find((item) => item.sticker_md5);
+
+      setStatus('对方正在组织回复...');
+      try {
+        const resp = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            slug: requestSlug,
+            message: combinedMessage,
+            history: historyBeforeSend,
+            enable_voice: document.getElementById('enable-voice').checked,
+            manual_sticker_md5: lastStickerItem?.sticker_md5 || null,
+            sticker_mode: document.getElementById('sticker-mode').value
+          })
+        });
+
+        if (!resp.ok) {
+          const text = await resp.text();
+          if (state.sessionVersion === requestSessionVersion && state.slug === requestSlug) {
+            state.pendingBatch = batchItems.concat(state.pendingBatch);
+            state.isRequestInFlight = false;
+          }
+          setStatus('请求失败');
+          renderMessage('assistant', `请求失败：${text}`);
+          return;
+        }
+
+        const data = await resp.json();
+        if (state.sessionVersion !== requestSessionVersion || state.slug !== requestSlug) {
+          state.isRequestInFlight = false;
+          return;
+        }
+        const finalText = `${data.reply_text}${data.emoji_text ? ' ' + data.emoji_text : ''}`.trim();
+        await sleep(computeAssistantDisplayDelayMs(batchItems, finalText, Boolean(data.audio_url)));
+        if (state.sessionVersion !== requestSessionVersion || state.slug !== requestSlug) {
+          state.isRequestInFlight = false;
+          return;
+        }
+        renderMessage('assistant', finalText, data);
+        state.history.push({
+          role: 'assistant',
+          content: data.reply_text || '',
+          emoji_text: data.emoji_text || '',
+          sticker_md5: data.sticker_md5 || null,
+          sticker_url: data.sticker_url || null,
+          audio_url: data.audio_url || null
+        });
+        saveSessionToStorage();
+        state.isRequestInFlight = false;
+        const mediaSummary = [
+          data.sticker_url ? '已发表情包' : '',
+          data.audio_url ? '已发语音' : '',
+        ].filter(Boolean).join('，');
+        setStatus(`回复完成，情绪：${data.emotion || '未标注'}${mediaSummary ? `，${mediaSummary}` : ''}`);
+
+        if (state.pendingBatch.length) {
+          scheduleReplyFlush();
+        }
+      } catch (error) {
+        if (state.sessionVersion === requestSessionVersion && state.slug === requestSlug) {
+          state.pendingBatch = batchItems.concat(state.pendingBatch);
+          state.isRequestInFlight = false;
+        }
+        throw error;
+      }
+    }
+
+    async function sendMessage(options = {}) {
+      const textarea = document.getElementById('message');
+      const content = textarea.value.trim();
+      const manualStickerMd5 = options.manualStickerMd5 || '';
+      const manualStickerUrl = options.manualStickerUrl || '';
+      if (!content && !manualStickerMd5) return;
+
+      const userEntry = {
+        role: 'user',
+        content,
+        emoji_text: '',
+        sticker_md5: manualStickerMd5 || null,
+        sticker_url: manualStickerUrl || null
+      };
+      renderMessage('user', content, { sticker_url: manualStickerUrl || '' });
+      state.history.push(userEntry);
+      state.pendingBatch.push(userEntry);
+      saveSessionToStorage();
+      textarea.value = '';
+      const savedReplyMode = document.getElementById('enable-paced-reply').checked;
+      if (state.isRequestInFlight) {
+        setStatus(savedReplyMode ? '已记录消息，等对方回复完再处理。' : '已记录消息，等待当前请求完成。');
+        return;
+      }
+
+      setStatus(savedReplyMode ? '已记录消息，等待更自然的回复时机...' : '正在生成回复...');
+      scheduleReplyFlush();
+    }
+
+    document.getElementById('reload-btn').addEventListener('click', () => {
+      loadProfile().catch((err) => setStatus(`载入失败：${err.message}`));
+    });
+
+    document.getElementById('voice-btn').addEventListener('click', () => {
+      buildVoiceProfile().catch((err) => setStatus(`声线构建失败：${err.message}`));
+    });
+
+    document.getElementById('more-stickers-btn').addEventListener('click', () => {
+      state.stickerVisible += 24;
+      renderStickerCandidates();
+    });
+
+    document.getElementById('clear-chat-btn').addEventListener('click', () => {
+      state.sessionVersion += 1;
+      state.history = [];
+      state.pendingBatch = [];
+      state.isRequestInFlight = false;
+      if (state.pendingReplyTimer) {
+        window.clearTimeout(state.pendingReplyTimer);
+        state.pendingReplyTimer = null;
+      }
+      localStorage.removeItem(getStorageKey(state.slug));
+      redrawChatLog();
+      setStatus('当前资料包的本地聊天记录已清空。');
+    });
+
+    document.getElementById('enable-voice').addEventListener('change', saveSessionToStorage);
+    document.getElementById('enable-paced-reply').addEventListener('change', saveSessionToStorage);
+    document.getElementById('sticker-mode').addEventListener('change', saveSessionToStorage);
+
+    document.getElementById('send-btn').addEventListener('click', () => {
+      sendMessage().catch((err) => setStatus(`发送失败：${err.message}`));
+    });
+
+    document.getElementById('message').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage().catch((err) => setStatus(`发送失败：${err.message}`));
+      }
+    });
+
+    loadProfile().catch((err) => setStatus(`载入失败：${err.message}`));
+  </script>
+</body>
+</html>

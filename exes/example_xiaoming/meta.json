@@ -1,0 +1,35 @@
+{
+  "name": "示例小明",
+  "slug": "example_xiaoming",
+  "created_at": "2026-04-08T00:00:00",
+  "updated_at": "2026-04-08T00:00:00",
+  "version": "public-demo",
+  "profile": {
+    "together_duration": "",
+    "apart_since": "",
+    "occupation": "",
+    "city": "",
+    "mbti": "",
+    "zodiac": ""
+  },
+  "impression": "这是一个脱敏演示资料包，只用于说明目录结构和本地聊天应用如何读取数据。",
+  "memory_sources": [],
+  "media_sources": {
+    "voice_transcripts": "",
+    "images_dir": "",
+    "emojis_dir": "",
+    "videos_dir": ""
+  },
+  "media_summary": {
+    "voice_target_messages": 0,
+    "voice_transcribed": 0,
+    "image_target_messages": 0,
+    "image_files": 0,
+    "emoji_target_messages": 0,
+    "emoji_files": 0,
+    "video_target_messages": 0,
+    "video_files": 0
+  },
+  "corrections_count": 0,
+  "build_mode": "public_demo"
+}

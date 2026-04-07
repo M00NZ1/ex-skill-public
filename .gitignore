@@ -1,0 +1,37 @@
+# 生成的前任 Skill（隐私保护，不上传）
+exes/*
+!exes/example_xiaoming/
+!exes/example_xiaoming/**
+
+# 临时文件
+/tmp/
+*.pyc
+__pycache__/
+.DS_Store
+stdout
+
+# 用户数据
+knowledge/
+*.db
+*.sqlite
+data/ChatBackup/
+data/texts/
+data/images/
+data/emojis/
+data/videos/
+data/Voices/
+data/voice_samples/
+data/runtime/
+data/processed/chatbackup_inventory/
+data/processed/legacy_exports/
+data/chat_records/*/
+!data/chat_records/README.md
+
+# IDE
+.vscode/
+.idea/
+
+# 环境
+.env
+venv/
+config/providers.local.json
