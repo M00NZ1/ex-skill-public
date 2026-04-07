@@ -2,6 +2,8 @@
 
 [中文](INSTALL.md) | [English](INSTALL_EN.md)
 
+This document is the English installation entry for the public repository.
+
 ## Scope
 
 This project supports two main usage patterns:
