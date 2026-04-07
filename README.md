@@ -11,9 +11,7 @@
 
 本项目基于 [perkfly/ex-skill](https://github.com/perkfly/ex-skill) 的角色资料包思路继续扩展开发，补充了通用构建流程、本地网页聊天界面、本地表情包发送、语音接口接入与公开发布所需的脱敏结构。
 
-仓库面向公开发布，默认不附带个人聊天样本、私有媒体与本地模型配置。导入你自己的聊天导出后，即可生成角色资料包，并在 Cursor、Codex、Gemini CLI、Claude Code 或本地网页中继续使用。
-
-如果你把它当作一个公开模板仓库来理解，会更容易把自己的数据与工程代码分开管理。
+这个仓库按“工程代码公开、个人数据本地保留”的方式组织。公开版本保留工具链、模板、示例资料包与本地聊天应用；真实聊天导出、媒体样本和本地模型配置在本地接入后参与构建，并继续用于 Cursor、Codex、Gemini CLI、Claude Code 或本地网页聊天。
 
 [开发来源与致谢](#开发来源与致谢) · [项目是什么](#项目是什么) · [功能说明](#功能说明) · [快速开始](#快速开始) · [使用流程](#使用流程) · [效果示例](#效果示例) · [安装部署](#安装部署) · [隐私与合规](#隐私与合规) · [相关文档](#相关文档)
 
@@ -85,6 +83,29 @@
 - 根据资料包中的回复节奏做拟真延迟与追发合并
 - 可选接入 TTS 与语音接口
 
+### 接口分工
+
+本项目当前把模型接口拆成三条独立通道：
+
+1. `TEXT_*`
+   用于网页聊天中的文本回复、表情策略与消息节奏生成；代码入口在 [app.py](apps/local_chat/app.py) 与 [llm_client.py](apps/local_chat/services/llm_client.py)。
+2. `ENRICH_*`
+   用于资料包自动补全与结构化提炼；代码入口在 [profile_autofill.py](tools/profile_autofill.py)。
+3. `TTS_*`
+   用于语音输出与可选声线克隆；代码入口在 [tts_client.py](apps/local_chat/services/tts_client.py) 与 [voice_profile_manager.py](apps/local_chat/services/voice_profile_manager.py)。
+
+当前内置的提供商映射包括：
+
+- `DeepSeek Official`
+- `SiliconFlow (硅基流动)`
+- `Volcengine (火山引擎/豆包)`
+
+默认优先级按代码实现如下：
+
+1. 文本聊天优先读取 `SiliconFlow (硅基流动)` 配置，其次回退到 `DeepSeek Official` 与 `Volcengine`
+2. 资料补全优先读取 `DeepSeek Official` 配置，其次回退到 `SiliconFlow (硅基流动)` 与 `Volcengine`
+3. 语音输出优先读取 `SiliconFlow (硅基流动)` 配置，并默认启用 `siliconflow_clone` 路径；未配置时可切换到 `openai_compatible`、`custom_http` 或 `none`
+
 ---
 
 ## 快速开始
@@ -138,7 +159,7 @@ uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
 
 ### 2. 准备媒体材料
 
-如果你还有这些内容，也建议一起导入：
+资料包同时支持接入这些媒体材料：
 
 - `transcripts.json`
 - `images/`
@@ -254,14 +275,15 @@ python tools/project_data_builder.py --slug your_ex --name "你的代号" --targ
 
 ## 隐私与合规
 
-本项目仅建议用于整理你本人有权处理的聊天导出数据，用于学习、研究、界面开发或个人项目实验。
+本项目的公开仓库只发布工程代码、模板、说明文档和脱敏示例结构。真实聊天导出、媒体样本、绝对路径引用与本地密钥配置属于本地运行层，不进入公开仓库本身。
 
-请注意：
+仓库的默认本地接入位置如下：
 
-1. 不要处理未经授权的他人隐私数据
-2. 不要将个人聊天记录、媒体文件或私有配置直接提交到公开仓库
-3. 本地使用时，建议将个人资料放在 `data/`、`exes/your_ex/`、`config/providers.local.json`
-4. 公开发布前，务必再次检查仓库中的真实文本、媒体样本、路径引用与密钥配置
+- `data/`
+- `exes/your_ex/`
+- `config/providers.local.json`
+
+对外发布时，仓库内容应保持为可公开的代码与模板状态，不应包含真实聊天正文、媒体样本、路径引用与密钥配置。
 
 ---
 
