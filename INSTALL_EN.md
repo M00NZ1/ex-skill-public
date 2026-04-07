@@ -1,0 +1,157 @@
+# Installation and Deployment Guide
+
+[中文](INSTALL.md) | [English](INSTALL_EN.md)
+
+## Scope
+
+This project supports two main usage patterns:
+
+1. Use it only as a role-pack build toolkit
+2. Run the local web chat app as well
+
+---
+
+## Requirements
+
+- Python 3.9+
+- `pip`
+- Optional: Node.js
+  Only needed for frontend script checks, not for running the local chat app
+
+---
+
+## Step 1: Clone the repository
+
+```bash
+git clone <your-repository-url>
+cd ex-skill-public
+```
+
+---
+
+## Step 2: Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Step 3: Configure model providers
+
+Choose one of the following:
+
+### Option A: Environment variables
+
+Reference:
+
+- [`config/local_chat.env.example`](config/local_chat.env.example)
+
+### Option B: Local config file
+
+Create:
+
+```text
+config/providers.local.json
+```
+
+Reference template:
+
+- [`config/providers.local.example.json`](config/providers.local.example.json)
+
+---
+
+## Step 4: Prepare chat exports
+
+Recommended reading:
+
+- [`docs/EXPORT_GUIDE.md`](docs/EXPORT_GUIDE.md)
+- [`docs/EXPORT_GUIDE_EN.md`](docs/EXPORT_GUIDE_EN.md)
+
+In short:
+
+1. WeChat data should be converted into readable `json / txt / html`
+2. QQ data should preferably come from official export flows or be cleaned into text
+3. Official WeChat `ChatBackup` folders must be converted before use
+
+---
+
+## Step 5: Build the role pack
+
+### Option A: Direct build
+
+```bash
+python tools/universal_builder.py \
+  --name "Your Codename" \
+  --slug "your_ex" \
+  --target "Chat Nickname" \
+  --chat-source "your_chat_file.txt"
+```
+
+### Option B: In-project workspace
+
+Initialize first:
+
+```bash
+python tools/project_data_builder.py --init --slug your_ex
+```
+
+Then build:
+
+```bash
+python tools/project_data_builder.py --slug your_ex --name "Your Codename" --target "Chat Nickname"
+```
+
+---
+
+## Step 6: Start the local chat app
+
+```bash
+uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
+```
+
+Open:
+
+[http://127.0.0.1:7860](http://127.0.0.1:7860)
+
+---
+
+## Deployment Notes
+
+### Build dependencies
+
+- Python
+- packages from `requirements.txt`
+
+### Local chat dependencies
+
+- an OpenAI-compatible chat API
+- optional TTS or voice API
+
+### Local private data
+
+If you connect your own voice samples, chat texts, or media files, keep them under:
+
+```text
+data/
+exes/your_ex/
+config/providers.local.json
+```
+
+Review those directories before publishing anything publicly.
+
+---
+
+## FAQ
+
+### 1. Why does the repository not include real chat samples?
+
+This is a public engineering template. Import your own chat exports locally and build your own role pack.
+
+### 2. Why is the default example called `example_xiaoming`?
+
+It is only a structure demo used to show how the app loads a role pack. It does not represent any real person.
+
+### 3. Can I use only the pack files without the local chat app?
+
+Yes. You can hand `SYSTEM_PROMPT.md`, `AGENT_PROMPT.md`, and the other generated files to Cursor, Codex, Claude Code, or Gemini CLI directly.

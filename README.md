@@ -1,5 +1,7 @@
 # ex-skill-public
 
+[中文](README.md) | [English](README_EN.md)
+
 > 可将朋友、前任、亲人等聊天记录整理为角色资料包，尽量还原他们的说话方式、交流习惯与陪伴感受。仅供学习与研究参考，严禁用于任何非法用途。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -7,44 +9,50 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-local%20chat-green.svg)](https://fastapi.tiangolo.com/)
 [![OpenAI Compatible](https://img.shields.io/badge/API-OpenAI%20Compatible-orange.svg)](#部署依赖)
 
-这是一个**基于 [perkfly/ex-skill](https://github.com/perkfly/ex-skill) 思路继续扩展开发**的公开版仓库。  
-当前版本移除了真实聊天记录、媒体文件、运行缓存和私人 API 配置，只保留完整工程代码、文档、通用构建工具和本地聊天应用，方便你用自己的聊天记录继续构建角色资料包。
+本项目基于 [perkfly/ex-skill](https://github.com/perkfly/ex-skill) 的角色资料包思路继续扩展开发，补充了通用构建流程、本地网页聊天界面、本地表情包发送、语音接口接入与公开发布所需的脱敏结构。
 
-[开发来源与致谢](#开发来源与致谢) · [项目是什么](#项目是什么) · [功能说明](#功能说明) · [怎么使用](#怎么使用) · [教程](#教程) · [效果示例](#效果示例) · [安装说明](#安装说明) · [部署依赖](#部署依赖) · [隐私说明](#隐私说明)
+仓库面向公开发布，默认不附带个人聊天样本、私有媒体与本地模型配置。导入你自己的聊天导出后，即可生成角色资料包，并在 Cursor、Codex、Gemini CLI、Claude Code 或本地网页中继续使用。
+
+[开发来源与致谢](#开发来源与致谢) · [项目是什么](#项目是什么) · [功能说明](#功能说明) · [快速开始](#快速开始) · [使用流程](#使用流程) · [效果示例](#效果示例) · [安装部署](#安装部署) · [隐私与合规](#隐私与合规) · [相关文档](#相关文档)
 
 ---
 
 ## 开发来源与致谢
 
-本项目的公开版整理与工程化扩展，明确致敬：
+本项目的核心思路来自：
 
 - [perkfly/ex-skill](https://github.com/perkfly/ex-skill)
 
-公开版在其原始思路基础上，继续补充了这些方向：
+在此基础上，当前公开版继续补充了这些方向：
 
-1. 通用宿主资料包构建流程
-2. 本地网页聊天应用
-3. 本地表情包与语音接口接入层
-4. 公开发布所需的脱敏结构
+1. 宿主无关的资料包构建流程
+2. 适配 Cursor、Codex、Gemini CLI、Claude Code 的统一资料结构
+3. 本地网页聊天应用与表情包发送面板
+4. 浏览器本地历史保存与拟真回复节奏
+5. 对接 OpenAI 兼容聊天接口与可选语音接口
 
-聊天记录准备工具说明中，同时感谢：
+微信聊天记录整理流程中，推荐配合：
 
 - [hicccc77/WeFlow](https://github.com/hicccc77/WeFlow?tab=readme-ov-file)
 
-根据 WeFlow 官方 README，它是一个本地微信聊天记录查看、分析与导出工具。对于微信聊天记录整理与导出，这是非常实用的一条路径。
+用于先将微信数据整理为可读的 `json / txt / html`，再接入本项目继续构建。
 
 ---
 
 ## 项目是什么
 
-`ex-skill-public` 是一个**聊天记录角色化工具链**，核心目标是：
+`ex-skill-public` 是一套面向聊天记录角色化的工程化工具链，核心目标是把你手中的聊天文本、语音转写、图片、表情包和视频等材料，整理为可继续使用的角色资料包。
 
-1. 读取你自己的聊天记录、语音转写、图片、表情包等材料
-2. 将原材料整理成宿主无关的资料包
-3. 生成 `memory.md`、`persona.md`、`SYSTEM_PROMPT.md`、`SKILL.md`
-4. 提供一个本地网页聊天应用，把提示词、本地表情包和语音接口真正接起来
+资料包构建完成后，仓库会生成：
 
-它不是一个“内置真实数据的成品角色”，而是一套**从私人聊天记录到可用角色资料包**的工程化流程。
+- `meta.json`
+- `memory.md`
+- `persona.md`
+- `SYSTEM_PROMPT.md`
+- `SKILL.md`
+- `AGENT_PROMPT.md`
+
+这些文件既可以交给代理式工具继续补全，也可以直接作为本地聊天应用的配置基础。
 
 ---
 
@@ -53,153 +61,116 @@
 ### 资料构建
 
 - 支持 `txt / json / html / 纯文本` 聊天导入
-- 支持把语音转写、图片、表情、视频整理进 `memories/media/`
-- 生成宿主无关资料包，可继续交给不同 AI 宿主补全
+- 支持整理语音转写、图片、表情包、视频到 `memories/media/`
+- 支持项目内工作区模式与直接命令构建模式
+- 生成宿主无关资料包，方便在不同 AI 工具间复用
 
 ### 宿主兼容
 
-- Claude Code / OpenClaw
 - Cursor
 - Codex
 - Gemini CLI
-- 其他支持读写文件的代理式工具
+- Claude Code
+- OpenClaw
+- 其他支持读取仓库文件的代理式工具
 
 ### 本地聊天应用
 
-- 本地网页聊天界面
+- 基于 FastAPI 的本地网页聊天界面
 - 左侧表情包面板点击即发送
 - 自动表情包三档：`关闭 / 克制 / 贴近原始`
-- 浏览器本地保存聊天历史，刷新后恢复
-- 拟真回复节奏：连续追发消息会先合并，再按资料包里的回复间隔做缩放延迟
-- 可对接 OpenAI 兼容聊天接口
-- 可对接 TTS/语音接口
+- 浏览器本地保存最近聊天历史
+- 根据资料包中的回复节奏做拟真延迟与追发合并
+- 可选接入 TTS 与语音接口
 
 ---
 
-## 怎么使用
+## 快速开始
 
-### 方式一：通用构建模式
+### 1. 安装依赖
 
-适合 Cursor、Codex、Gemini CLI、Claude Code 等环境。
+```bash
+pip install -r requirements.txt
+```
 
-先准备一份可读聊天记录，然后执行：
+### 2. 构建角色资料包
 
 ```bash
 python tools/universal_builder.py \
   --name "你的代号" \
   --slug "your_ex" \
-  --target "聊天中对方的昵称" \
+  --target "聊天中的昵称" \
   --chat-source "你的聊天文件.txt"
 ```
 
-生成后，核心结果位于：
-
-```text
-exes/your_ex/
-├── meta.json
-├── memory.md
-├── persona.md
-├── SYSTEM_PROMPT.md
-├── SKILL.md
-└── AGENT_PROMPT.md
-```
-
-### 方式二：项目内工作区模式
-
-如果你想把自己的聊天资料放在项目内管理，先初始化：
-
-```bash
-python tools/project_data_builder.py --init --slug your_ex
-```
-
-然后把资料按结构放入：
-
-```text
-data/chat_records/your_ex/
-├── raw/
-├── media/
-│   ├── images/
-│   ├── emojis/
-│   ├── voice/
-│   └── video/
-└── notes/
-```
-
-最后构建：
-
-```bash
-python tools/project_data_builder.py --slug your_ex --name "你的代号" --target "聊天昵称"
-```
-
-### 方式三：本地聊天应用
-
-启动：
+### 3. 启动本地聊天应用
 
 ```bash
 uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
 ```
 
-浏览器打开：
+### 4. 在浏览器中打开
 
 [http://127.0.0.1:7860](http://127.0.0.1:7860)
 
-默认公开示例资料包是：
-
-```text
-exes/example_xiaoming/
-```
-
-你把左侧 `slug` 改成自己的资料包名后，就能直接使用自己的数据。
-
 ---
 
-## 教程
+## 使用流程
 
-### 1. 先准备聊天记录
+### 1. 准备聊天导出
 
-推荐优先使用这些来源：
+推荐输入格式：
 
-- 微信：推荐 [WeFlow](https://github.com/hicccc77/WeFlow?tab=readme-ov-file) 导出 `JSON / HTML / TXT` 等格式
-- QQ：推荐官方客户端导出，或复制为 `txt`
-- 其他平台：手工整理为纯文本也可以
+- `txt`
+- `json`
+- `html`
+- 手工整理的纯文本
 
-注意：
+推荐来源：
 
-1. 根据 WeFlow 官方 README，它明确定位为**微信聊天记录导出与分析工具**，并注明“仅支持微信 4.0 及以上版本”。
-2. 我不会在文档里把 WeFlow 写成 QQ 提取工具，因为它的官方说明没有这么写。
-3. 如果你要处理 QQ，建议仍走 QQ 官方导出、手工整理或其他你自行评估的方案。
+- 微信：推荐使用 [WeFlow](https://github.com/hicccc77/WeFlow?tab=readme-ov-file) 导出可读结果
+- QQ：推荐使用官方客户端导出为可读文本，再接入本项目
+- 其他平台：手工整理为纯文本也可使用
 
-### 2. 把媒体也一起准备好
+如果拿到的是微信官方迁移备份目录，例如 `.enc`、`.dat`、`backup.attr`、`files/` 这类内容，需要先转换为可读文本或结构化导出，再交给本项目处理。
 
-如果你还有这些材料，也建议一起放入：
+### 2. 准备媒体材料
+
+如果你还有这些内容，也建议一起导入：
 
 - `transcripts.json`
 - `images/`
 - `emojis/`
 - `videos/`
 
-这样构建器会把它们整理到 `memories/media/`，提升角色还原度。
+这样构建器会在 `memories/media/` 下生成语音、图片、表情包和视频报告，后续资料补全会更稳定。
 
 ### 3. 生成资料包
 
-最简单的命令：
+直接模式：
 
 ```bash
-python tools/universal_builder.py --help
+python tools/universal_builder.py \
+  --name "你的代号" \
+  --slug "your_ex" \
+  --target "聊天昵称" \
+  --chat-source "导出的聊天文件"
 ```
 
-或者：
+项目内工作区模式：
 
 ```bash
 python tools/project_data_builder.py --init --slug your_ex
+python tools/project_data_builder.py --slug your_ex --name "你的代号" --target "聊天昵称"
 ```
 
-### 4. 在不同环境里继续使用
+### 4. 在不同宿主中使用
 
 - Cursor：让代理读取 `AGENT_PROMPT.md`
-- Codex：让代理读取 `AGENT_PROMPT.md` 和 `SYSTEM_PROMPT.md`
-- Claude Code：可继续用 Skill 模式
-- 本地网页：直接切到你的 `slug`
+- Codex：让代理读取 `AGENT_PROMPT.md`、`memory.md`、`persona.md`
+- Gemini CLI：让代理按资料包补全并生成最终提示词
+- Claude Code：可继续沿用 Skill 模式
+- 本地网页：直接在页面中输入对应 `slug`
 
 ---
 
@@ -232,7 +203,7 @@ python tools/project_data_builder.py --init --slug your_ex
 
 ```text
 用户在左侧表情包面板点选一张表情包
-页面会把这张本地表情包作为一条真实消息发送
+页面会将这张本地表情包作为一条真实消息发送
 后端再根据这条消息生成下一句回复
 ```
 
@@ -246,63 +217,12 @@ python tools/project_data_builder.py --init --slug your_ex
 
 ---
 
-## 安装说明
+## 安装部署
 
-### 1. 克隆仓库
-
-```bash
-git clone <你的仓库地址>
-cd ex-skill-public
-```
-
-### 2. 安装 Python 依赖
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. 准备模型配置
-
-可选两种方式：
-
-1. 使用环境变量
-2. 在本地创建：
-
-```text
-config/providers.local.json
-```
-
-你可以参考：
-
-- [config/local_chat.env.example](config/local_chat.env.example)
-- [config/providers.local.example.json](config/providers.local.example.json)
-
-### 4. 构建你的资料包
-
-```bash
-python tools/project_data_builder.py --init --slug your_ex
-```
-
-或：
-
-```bash
-python tools/universal_builder.py --help
-```
-
-### 5. 启动本地聊天应用
-
-```bash
-uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
-```
-
----
-
-## 部署依赖
-
-### 基础运行依赖
+### 基础依赖
 
 - Python 3.9+
-- `requirements.txt` 中的 Python 包
+- `requirements.txt` 中的依赖包
 
 当前主要包括：
 
@@ -311,42 +231,51 @@ uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
 - `httpx`
 - `pydantic`
 
-### 本地聊天应用依赖
+### 模型配置方式
 
-- 一个 OpenAI 兼容聊天接口
-- 可选的 TTS/语音接口
+支持两种常见方式：
 
-### 可选辅助工具
+1. 环境变量
+2. 本地配置文件 `config/providers.local.json`
 
-- 微信记录提取：推荐 [WeFlow](https://github.com/hicccc77/WeFlow?tab=readme-ov-file)
-- QQ 记录导出：推荐官方客户端导出
+可参考：
+
+- [config/local_chat.env.example](config/local_chat.env.example)
+- [config/providers.local.example.json](config/providers.local.example.json)
+
+### 详细说明
+
+- 中文安装说明：[INSTALL.md](INSTALL.md)
+- English Installation Guide: [INSTALL_EN.md](INSTALL_EN.md)
 
 ---
 
-## 隐私说明
+## 隐私与合规
 
-这个公开版仓库已经移除：
+本项目仅建议用于整理你本人有权处理的聊天导出数据，用于学习、研究、界面开发或个人项目实验。
 
-1. 真实聊天记录
-2. 真实图片、表情包、语音、视频
-3. 本地运行缓存
-4. 私人资料包
-5. 真实 API Key
-6. 私有路径和本机目录引用
+请注意：
 
-你自己的真实数据建议只放在：
-
-- `data/`
-- `exes/your_ex/`
-- `config/providers.local.json`
-
-并确保这些内容不要提交到 GitHub。
+1. 不要处理未经授权的他人隐私数据
+2. 不要将个人聊天记录、媒体文件或私有配置直接提交到公开仓库
+3. 本地使用时，建议将个人资料放在 `data/`、`exes/your_ex/`、`config/providers.local.json`
+4. 公开发布前，务必再次检查仓库中的真实文本、媒体样本、路径引用与密钥配置
 
 ---
 
 ## 相关文档
 
-- [INSTALL.md](INSTALL.md)
-- [docs/UNIVERSAL_USAGE.md](docs/UNIVERSAL_USAGE.md)
-- [docs/EXPORT_GUIDE.md](docs/EXPORT_GUIDE.md)
-- [docs/LOCAL_CHAT.md](docs/LOCAL_CHAT.md)
+### 中文
+
+- [安装与部署](INSTALL.md)
+- [通用宿主使用指南](docs/UNIVERSAL_USAGE.md)
+- [聊天记录导入指南](docs/EXPORT_GUIDE.md)
+- [本地聊天应用说明](docs/LOCAL_CHAT.md)
+
+### English
+
+- [README_EN.md](README_EN.md)
+- [INSTALL_EN.md](INSTALL_EN.md)
+- [Universal Usage Guide](docs/UNIVERSAL_USAGE_EN.md)
+- [Chat Export Guide](docs/EXPORT_GUIDE_EN.md)
+- [Local Chat Guide](docs/LOCAL_CHAT_EN.md)

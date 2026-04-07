@@ -1,11 +1,13 @@
 # 安装与部署说明
 
+[中文](INSTALL.md) | [English](INSTALL_EN.md)
+
 ## 适用范围
 
-这个公开版支持两种主要使用方式：
+本项目支持两条主要使用路径：
 
-1. 只把它当成资料构建工具
-2. 同时启动本地网页聊天应用
+1. 仅将其作为资料包构建工具使用
+2. 同时启动本地网页聊天应用进行交互
 
 ---
 
@@ -14,7 +16,7 @@
 - Python 3.9+
 - `pip`
 - 可选：Node.js
-  用于前端脚本检查，不是运行本地聊天应用的硬性要求
+  仅用于前端脚本检查，不是运行本地聊天应用的硬性要求
 
 ---
 
@@ -47,7 +49,7 @@ pip install -r requirements.txt
 
 ### 方案 B：本地配置文件
 
-在仓库里新建：
+在仓库中创建：
 
 ```text
 config/providers.local.json
@@ -57,8 +59,6 @@ config/providers.local.json
 
 - [`config/providers.local.example.json`](config/providers.local.example.json)
 
-这个文件已经被 `.gitignore` 忽略，不会默认提交到 GitHub。
-
 ---
 
 ## 第四步：准备聊天记录
@@ -66,12 +66,13 @@ config/providers.local.json
 推荐阅读：
 
 - [`docs/EXPORT_GUIDE.md`](docs/EXPORT_GUIDE.md)
+- [`docs/EXPORT_GUIDE_EN.md`](docs/EXPORT_GUIDE_EN.md)
 
-简要结论：
+简要建议：
 
-1. 微信推荐使用 [WeFlow](https://github.com/hicccc77/WeFlow?tab=readme-ov-file) 导出可读格式
-2. QQ 推荐使用官方客户端导出，或手工复制整理为 `txt`
-3. 微信官方 `ChatBackup` 不能直接喂给本项目
+1. 微信可优先整理为 `json / txt / html`
+2. QQ 可优先使用官方客户端导出，再整理为可读文本
+3. 微信官方 `ChatBackup` 需要先转换为可读内容，再交给本项目
 
 ---
 
@@ -125,31 +126,32 @@ uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
 ### 本地聊天应用依赖
 
 - OpenAI 兼容聊天接口
-- 可选 TTS/语音接口
+- 可选 TTS 或语音接口
 
-### 语音克隆依赖
+### 本地私有数据
 
-公开版只保留接口接入能力，不内置真实样本。  
-如果你要接入自己的声线样本，请把文件放到：
+若需接入你自己的语音样本、聊天文本或媒体材料，建议放在：
 
 ```text
-data/voice_samples/
+data/
+exes/your_ex/
+config/providers.local.json
 ```
 
-不要提交到 GitHub。
+并在提交公开仓库前自行确认这些目录未包含需要保密的内容。
 
 ---
 
 ## 常见问题
 
-### 1. 公开版为什么没有真实聊天记录？
+### 1. 为什么仓库默认没有聊天样本？
 
-因为公开版是给 GitHub 使用的，真实聊天记录、媒体和缓存都已经移除。
+这是一个面向公开发布的工程模板。你需要在本地导入自己的聊天导出，再生成属于自己的资料包。
 
 ### 2. 默认示例为什么叫 `example_xiaoming`？
 
-这是一个脱敏演示资料包，只为了保证仓库开箱可读，不代表任何真实人物。
+它只是一个结构示例，用于演示目录组织与应用加载方式，不对应任何真实人物。
 
-### 3. 我可以只用资料包，不启本地聊天应用吗？
+### 3. 可以只用资料包，不启本地聊天应用吗？
 
-可以。你只需要把生成后的 `SYSTEM_PROMPT.md`、`AGENT_PROMPT.md` 等交给 Cursor、Codex、Claude Code 或 Gemini CLI 使用即可。
+可以。你可以直接将生成后的 `SYSTEM_PROMPT.md`、`AGENT_PROMPT.md` 等交给 Cursor、Codex、Claude Code 或 Gemini CLI 使用。

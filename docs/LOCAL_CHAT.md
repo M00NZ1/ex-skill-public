@@ -1,11 +1,13 @@
 # 本地聊天应用使用说明
 
+[中文](LOCAL_CHAT.md) | [English](LOCAL_CHAT_EN.md)
+
 ## 适用场景
 
 如果你不满足于“只生成提示词”，而是希望：
 
 1. 在网页里直接聊天
-2. 显示本地表情包
+2. 显示并手动发送本地表情包
 3. 在合适时机自动发表情包
 4. 根据语音接口生成可播放音频
 5. 保留浏览器本地聊天历史
@@ -18,23 +20,15 @@ apps/local_chat/
 
 ---
 
-## 公开版说明
+## 目录说明
 
-这个公开版仓库已经移除：
-
-1. 真实聊天记录
-2. 真实媒体文件
-3. 本地运行缓存
-4. 私人资料包
-5. 私有 API 配置
-
-仓库中保留了一个脱敏示例资料包：
+仓库内提供了一个示例资料包：
 
 ```text
 exes/example_xiaoming/
 ```
 
-它只用于演示目录结构和应用加载方式，不代表任何真实人物。
+它只用于演示目录结构和应用加载方式。实际使用时，请将左侧 `slug` 改成你自己的资料包名。
 
 ---
 
@@ -42,29 +36,28 @@ exes/example_xiaoming/
 
 ### 1. 配置模型
 
-有两种方式：
+支持两种方式：
 
-1. 直接用环境变量配置
-2. 在仓库内新建 `config/providers.local.json`
+1. 使用环境变量
+2. 在仓库内创建 `config/providers.local.json`
 
 可参考：
 
-[`config/local_chat.env.example`](../config/local_chat.env.example)
-
-以及：
-
-[`config/providers.local.example.json`](../config/providers.local.example.json)
+- [`config/local_chat.env.example`](../config/local_chat.env.example)
+- [`config/providers.local.example.json`](../config/providers.local.example.json)
 
 ### 2. 准备你自己的资料包
 
 推荐用这两种方式之一：
 
-1. 先执行：
+1. 执行：
+
 ```bash
 python tools/project_data_builder.py --init --slug your_ex
 ```
 
-2. 或直接执行：
+2. 或执行：
+
 ```bash
 python tools/universal_builder.py --help
 ```
@@ -103,12 +96,12 @@ uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
 1. 第一次启动时，先把左侧 `slug` 改成你自己的资料包名
 2. 如果你只想手动发表情包，把“自动表情包”切到 `关闭`
 3. 如果你不想它句句都回，保持“拟真回复节奏”开启
-4. 如果你需要公开发布仓库，不要把 `data/` 和你自己的 `exes/{slug}` 提交上去
+4. 公开发布前，请确认 `data/` 和 `exes/{slug}` 中没有不应公开的真实内容
 
 ---
 
 ## 注意事项
 
-1. 这个页面保存的是浏览器本地历史，不是服务端数据库
+1. 页面保存的是浏览器本地历史，不是服务端数据库
 2. 切换浏览器、清空站点缓存后，本地历史会消失
-3. 如果你要接入语音克隆，请把本地样本放到 `data/voice_samples/`，不要提交到 GitHub
+3. 如果你要接入语音克隆，请把样本放到 `data/voice_samples/`，并自行管理这些文件的保密性

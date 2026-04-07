@@ -1,162 +1,290 @@
-# ex.skill
+# ex-skill-public
 
-> *"Every goodbye deserves a gentle place to rest."*
+[中文](README.md) | [English](README_EN.md)
 
-**Distill your ex into an AI Skill — let them live on in your terminal.**
+> Turn chat exports from friends, exes, or family into a reusable role pack that tries to preserve their tone, habits, and conversational presence. For learning and research only. Do not use this project for any illegal purpose.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blueviolet)](https://claude.ai/code)
-[![AgentSkills](https://img.shields.io/badge/AgentSkills-Standard-green)](https://agentskills.io)
+[![FastAPI](https://img.shields.io/badge/FastAPI-local%20chat-green.svg)](https://fastapi.tiangolo.com/)
+[![OpenAI Compatible](https://img.shields.io/badge/API-OpenAI%20Compatible-orange.svg)](#deployment)
 
-&nbsp;
+This project extends the role-pack workflow inspired by [perkfly/ex-skill](https://github.com/perkfly/ex-skill) and adds a host-agnostic build pipeline, a local web chat app, local sticker sending, voice interface hooks, and a repository layout suitable for public release.
 
-Provide source materials from your past relationship (chat logs, photos, social media posts) plus your own descriptions.
-Generate an **AI Skill that truly sounds like them** —
-speaks with their catchphrases, replies in their style, remembers the places you went together.
+The repository is designed for public publishing, so it does not ship with personal chat samples, private media, or local model credentials. Import your own chat exports locally, build a role pack, and continue using it in Cursor, Codex, Gemini CLI, Claude Code, or the bundled local web chat.
 
-⚠️ **This project is for personal reflection and emotional healing only. Not for harassment, stalking, or privacy invasion.**
-
-[Installation](#installation) · [Usage](#usage) · [Examples](#examples) · [中文](README.md)
+[Credits](#credits) · [What It Is](#what-it-is) · [Features](#features) · [Quick Start](#quick-start) · [Workflow](#workflow) · [Examples](#examples) · [Deployment](#deployment) · [Privacy and Compliance](#privacy-and-compliance) · [Docs](#docs)
 
 ---
 
-## Installation
+## Credits
 
-### Claude Code
+The main product idea is inspired by:
 
-```bash
-# Install to current project
-mkdir -p .claude/skills
-git clone https://github.com/therealXiaomanChu/ex-skill .claude/skills/create-ex
+- [perkfly/ex-skill](https://github.com/perkfly/ex-skill)
 
-# Or install globally
-git clone https://github.com/therealXiaomanChu/ex-skill ~/.claude/skills/create-ex
-```
+This public edition expands that direction with:
 
-### Dependencies (optional)
+1. A host-agnostic role-pack build flow
+2. A shared structure for Cursor, Codex, Gemini CLI, and Claude Code
+3. A local web chat app with a sticker panel
+4. Browser-side chat history and paced reply behavior
+5. OpenAI-compatible chat support and optional voice hooks
 
-```bash
-pip3 install -r requirements.txt
-```
+For WeChat export workflows, this project also recommends:
 
----
+- [hicccc77/WeFlow](https://github.com/hicccc77/WeFlow?tab=readme-ov-file)
 
-## Usage
-
-In Claude Code, type:
-
-```
-/create-ex
-```
-
-Follow the prompts: enter a codename, basic info, personality traits, then choose data sources. All fields except the codename can be skipped.
-
-After creation, use `/{slug}` to chat with the generated ex Skill.
-
-### Commands
-
-| Command | Description |
-|---------|-------------|
-| `/list-exes` | List all ex Skills |
-| `/{slug}` | Full Skill (chat like them) |
-| `/{slug}-memory` | Memory mode (recall shared experiences) |
-| `/{slug}-persona` | Persona only |
-| `/ex-rollback {slug} {version}` | Rollback to a previous version |
-| `/delete-ex {slug}` | Delete |
-| `/let-go {slug}` | Gentle alias for delete |
+Use it to convert local WeChat data into readable `json / txt / html` exports before feeding them into this project.
 
 ---
 
-## Examples
+## What It Is
 
-> Input: `First love, 3 years together in college, ENFP, Gemini, talkative, sends voice messages at 2am, still likes my posts after breakup`
+`ex-skill-public` is an engineering toolkit for turning private chat materials into reusable role packs.
 
-**Scenario 1: Casual Chat**
+The build process can combine:
 
-```
-You          ❯ whatcha doing
+- chat logs
+- voice transcripts
+- images
+- stickers
+- videos
 
-Ex.skill     ❯ just had dinner, scrolling my phone
-               why'd you message me out of nowhere
-               [sends a meme]
-```
+After building, the project generates:
 
-**Scenario 2: Memory Lane**
+- `meta.json`
+- `memory.md`
+- `persona.md`
+- `SYSTEM_PROMPT.md`
+- `SKILL.md`
+- `AGENT_PROMPT.md`
 
-```
-You          ❯ remember our first date?
-
-Ex.skill     ❯ the one with the terrible pasta? lmao
-               you pretended it was good, I totally noticed
-               that restaurant closed down btw, did you know?
-```
-
-**Scenario 3: Late Night Emo**
-
-```
-You          ❯ I kinda miss you
-
-Ex.skill     ❯ ...
-               yeah
-               get some sleep
-```
+These files can be consumed by agent tools directly or loaded by the local chat app.
 
 ---
 
 ## Features
 
-### Data Sources
+### Build Pipeline
 
-| Source | Format | Notes |
-|--------|--------|-------|
-| WeChat | txt / html / json / csv exports | Recommended, richest data |
-| QQ | txt / mht export | Great for school-era relationships |
-| Social Media | Screenshots | Extracts public persona |
-| Photos | JPEG/PNG with EXIF | Timeline and location extraction |
-| Narration | Plain text | Your subjective memories |
+- Supports `txt / json / html / plain text` imports
+- Organizes media evidence into `memories/media/`
+- Supports both direct CLI builds and in-project workspace builds
+- Produces reusable host-independent role packs
 
-### Generated Skill Structure
+### Host Compatibility
 
-Each ex Skill has two parts working together:
+- Cursor
+- Codex
+- Gemini CLI
+- Claude Code
+- OpenClaw
+- Other agent-style tools that can read repository files
 
-| Part | Content |
-|------|---------|
-| **Part A — Relationship Memory** | Shared experiences, date spots, inside jokes, fight patterns, sweet moments, timeline |
-| **Part B — Persona** | 5-layer structure: Hard rules → Identity → Speech style → Emotional patterns → Relationship behavior |
+### Local Chat App
 
-### Supported Tags
-
-**Attachment Styles**: Secure · Anxious · Avoidant · Disorganized
-
-**Love Languages**: Words of Affirmation · Quality Time · Receiving Gifts · Acts of Service · Physical Touch
-
-**Personality Tags**: Talkative · Reserved · Tough-love · Silent treatment · Clingy · Independent · Romantic · Pragmatic · Perfectionist · Procrastinator · Workaholic · Jealous · Insecure · Night owl · Leaves on read · Instant replier ...
-
-### Evolution
-
-* **Append memories** → New chat logs or photos → Auto-analyze and merge
-* **Conversation corrections** → "They wouldn't say that" → Instant correction
-* **Version management** → Auto-archive on every update → Rollback supported
+- FastAPI-based local web UI
+- Click-to-send local sticker panel
+- Three automatic sticker modes: `off / restrained / closer-to-original`
+- Browser-local chat history restore
+- Simulated reply pacing based on role-pack timing signals
+- Optional TTS / voice interface integration
 
 ---
 
-## Philosophy
+## Quick Start
 
-> Every relationship teaches us something.
-> Some people leave, but their words, their laughter, the way they got angry —
-> all of it stays in your neural network.
-> This Skill just helps you migrate those memories from biological to digital neural networks.
-> Not to hold on, but to say a proper goodbye.
+### 1. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Build a role pack
+
+```bash
+python tools/universal_builder.py \
+  --name "Your Codename" \
+  --slug "your_ex" \
+  --target "Chat Nickname" \
+  --chat-source "your_chat_file.txt"
+```
+
+### 3. Start the local chat app
+
+```bash
+uvicorn apps.local_chat.app:app --host 127.0.0.1 --port 7860 --reload
+```
+
+### 4. Open the browser
+
+[http://127.0.0.1:7860](http://127.0.0.1:7860)
 
 ---
 
-## Acknowledgments
+## Workflow
 
-The architecture of this project is directly inspired by **[colleague-skill (同事.skill)](https://github.com/titanwings/colleague-skill)** by [titanwings](https://github.com/titanwings). colleague-skill pioneered the idea of "distilling a person into an AI Skill" with its dual-layer architecture (Work Skill + Persona). Ex-Partner.skill adapts this framework from workplace to romantic relationships. Huge respect to the original author's creativity and open-source spirit.
+### 1. Prepare readable chat exports
 
-This project follows the [AgentSkills](https://agentskills.io) open standard, compatible with Claude Code and OpenClaw.
+Recommended formats:
+
+- `txt`
+- `json`
+- `html`
+- manually cleaned plain text
+
+Recommended sources:
+
+- WeChat: export readable data with [WeFlow](https://github.com/hicccc77/WeFlow?tab=readme-ov-file)
+- QQ: use the official export flow or clean the content into plain text
+- Other platforms: manually cleaned plain text is also acceptable
+
+If all you have is an official WeChat migration backup with `.enc`, `.dat`, `backup.attr`, or `files/`, convert it into readable text or structured exports first.
+
+### 2. Add media materials
+
+If available, also prepare:
+
+- `transcripts.json`
+- `images/`
+- `emojis/`
+- `videos/`
+
+This allows the builder to produce richer reports under `memories/media/`.
+
+### 3. Generate the pack
+
+Direct mode:
+
+```bash
+python tools/universal_builder.py \
+  --name "Your Codename" \
+  --slug "your_ex" \
+  --target "Chat Nickname" \
+  --chat-source "exported_chat_file"
+```
+
+Workspace mode:
+
+```bash
+python tools/project_data_builder.py --init --slug your_ex
+python tools/project_data_builder.py --slug your_ex --name "Your Codename" --target "Chat Nickname"
+```
+
+### 4. Use it in different hosts
+
+- Cursor: ask the agent to read `AGENT_PROMPT.md`
+- Codex: ask the agent to read `AGENT_PROMPT.md`, `memory.md`, and `persona.md`
+- Gemini CLI: ask the agent to complete the role pack from the generated files
+- Claude Code: keep using the Skill-oriented flow
+- Local web UI: switch the page `slug` to your own pack
 
 ---
 
-MIT License © [therealXiaomanChu](https://github.com/therealXiaomanChu)
+## Examples
+
+> Input profile: `talkative, soft-hearted behind a tough tone, active at night, short burst replies, frequent stickers, occasional voice messages`
+
+### Scenario 1: Casual chat
+
+```text
+User         > what are you doing
+
+Role reply   > just finished up
+             > what about you
+             > why did you only come to me now
+```
+
+### Scenario 2: Rapid consecutive messages
+
+```text
+User         > are you asleep
+User         > are you still there
+User         > I kinda miss you
+
+Role reply   > not asleep
+             > why are you suddenly this clingy today
+```
+
+### Scenario 3: Manual sticker send
+
+```text
+The user clicks a local sticker in the left panel
+The page sends that sticker as a real message
+The backend then generates the next reply based on it
+```
+
+### Scenario 4: Paced replies
+
+```text
+Replies do not have to appear instantly
+Consecutive user messages can be merged first
+Then the final reply is delayed using timing signals from the role pack
+```
+
+---
+
+## Deployment
+
+### Base dependencies
+
+- Python 3.9+
+- packages listed in `requirements.txt`
+
+Main packages include:
+
+- `fastapi`
+- `uvicorn`
+- `httpx`
+- `pydantic`
+
+### Model configuration
+
+Two common options are supported:
+
+1. environment variables
+2. local config file at `config/providers.local.json`
+
+References:
+
+- [config/local_chat.env.example](config/local_chat.env.example)
+- [config/providers.local.example.json](config/providers.local.example.json)
+
+Detailed guides:
+
+- Chinese install guide: [INSTALL.md](INSTALL.md)
+- English install guide: [INSTALL_EN.md](INSTALL_EN.md)
+
+---
+
+## Privacy and Compliance
+
+Use this project only with chat data you are authorized to handle for learning, research, interface experiments, or personal projects.
+
+Please keep the following in mind:
+
+1. Do not process private data without authorization
+2. Do not publish personal chat logs, media files, or private credentials in a public repository
+3. Store your own role-pack data locally under `data/`, `exes/your_ex/`, and `config/providers.local.json`
+4. Before publishing, re-check all real text, media files, paths, and secrets
+
+---
+
+## Docs
+
+### Chinese
+
+- [README.md](README.md)
+- [INSTALL.md](INSTALL.md)
+- [docs/UNIVERSAL_USAGE.md](docs/UNIVERSAL_USAGE.md)
+- [docs/EXPORT_GUIDE.md](docs/EXPORT_GUIDE.md)
+- [docs/LOCAL_CHAT.md](docs/LOCAL_CHAT.md)
+
+### English
+
+- [README_EN.md](README_EN.md)
+- [INSTALL_EN.md](INSTALL_EN.md)
+- [docs/UNIVERSAL_USAGE_EN.md](docs/UNIVERSAL_USAGE_EN.md)
+- [docs/EXPORT_GUIDE_EN.md](docs/EXPORT_GUIDE_EN.md)
+- [docs/LOCAL_CHAT_EN.md](docs/LOCAL_CHAT_EN.md)
