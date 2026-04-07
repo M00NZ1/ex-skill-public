@@ -12,6 +12,7 @@
 This project extends the role-pack workflow inspired by [perkfly/ex-skill](https://github.com/perkfly/ex-skill) and adds a host-agnostic build pipeline, a local web chat app, local sticker sending, voice interface hooks, and a repository layout suitable for public release.
 
 This repository is organized around a simple split: public code stays in the repository, personal chat data stays local. The public edition ships with the toolchain, templates, a sanitized example pack, and the local web chat app; real chat exports, media samples, and local model credentials are connected locally and then used in Cursor, Codex, Gemini CLI, Claude Code, or the bundled web chat.
+Chinese documentation remains the primary presentation layer for this repository.
 
 [Credits](#credits) · [What It Is](#what-it-is) · [Features](#features) · [Quick Start](#quick-start) · [Workflow](#workflow) · [Examples](#examples) · [Deployment](#deployment) · [Privacy and Compliance](#privacy-and-compliance) · [Docs](#docs)
 
