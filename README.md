@@ -1,4 +1,4 @@
-# ex-skill-public
+# Persona-Distill-skill
 
 [中文](README.md) | [English](README_EN.md)
 
